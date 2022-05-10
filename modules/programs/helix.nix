@@ -56,6 +56,26 @@ in {
         for more information.
       '';
     };
+        
+    grammars = mkOption {
+      type = types.listOf tomlFormat.type;
+      default = [ ];
+      example = [{
+        name = "haskell";
+        source = { 
+          git = "https://github.com/tree-sitter/tree-sitter-haskell"; 
+          rev = "b6ec26f181dd059eedd506fa5fbeae1b8e5556c8" ;
+        };      
+      }];      
+
+      description = ''
+        Language specific grammar configuration at
+        <filename>$XDG_CONFIG_HOME/helix/languages.toml</filename>.
+        </para><para>
+        See <link xlink:href="https://docs.helix-editor.com/languages.html#tree-sitter-grammars" />
+        for more information.
+      '';
+    };
 
     themes = mkOption {
       type = types.attrsOf tomlFormat.type;
@@ -136,9 +156,9 @@ in {
         "helix/config.toml" = mkIf (cfg.settings != { }) {
           source = tomlFormat.generate "helix-config" cfg.settings;
         };
-        "helix/languages.toml" = mkIf (cfg.languages != [ ]) {
+        "helix/languages.toml" = mkIf (cfg.languages != [ ] || cfg.grammars != [ ]) {
           source =
-            tomlFormat.generate "helix-config" { language = cfg.languages; };
+            tomlFormat.generate "helix-config" { language = cfg.languages; grammar = cfg.grammars; };
         };
       };
 
